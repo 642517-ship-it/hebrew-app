@@ -153,16 +153,16 @@ function SwipeCard({word,mode,onKnow,onDontKnow,stackPos,isTop,srsInfo}) {
           color:"white",padding:"6px 16px",borderRadius:100,fontWeight:900,fontSize:14,
           fontFamily:"Tajawal,sans-serif",transform:"rotate(10deg)"}}>✗ لا أعرف</div>
       </>}
-      <div style={{width:"100%",height:220,borderRadius:28,overflow:"hidden",
+      <div style={{width:"100%",height:190,borderRadius:24,overflow:"hidden",
         background:"linear-gradient(145deg,rgba(108,99,255,.28),rgba(255,107,157,.16))",
         border:"1px solid rgba(255,255,255,.13)",backdropFilter:"blur(20px)",
         display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
-        padding:"16px 24px 36px",position:"relative"}}>
+        padding:"12px 20px 28px",position:"relative"}}>
         {srsInfo&&isTop&&<div style={{position:"absolute",top:14,left:14,
           background:"rgba(108,99,255,.3)",color:"#C4BCFF",padding:"3px 10px",
           borderRadius:100,fontSize:10,fontWeight:700}}>{srsInfo}</div>}
-        <div style={{fontSize:48,marginBottom:6,lineHeight:1}}>{word.emoji||"📝"}</div>
-        <div style={{fontSize:word.nikud?.length>8?36:word.nikud?.length>5?42:50,
+        <div style={{fontSize:36,marginBottom:4,lineHeight:1}}>{word.emoji||"📝"}</div>
+        <div style={{fontSize:word.nikud?.length>8?30:word.nikud?.length>5?36:44,
           fontWeight:900,color:"white",textAlign:"center",lineHeight:1.1,
           textShadow:"0 4px 28px rgba(108,99,255,.6)",letterSpacing:2,direction:"ltr",marginBottom:8}}>
           {word.nikud||word.hebrew}
@@ -172,7 +172,7 @@ function SwipeCard({word,mode,onKnow,onDontKnow,stackPos,isTop,srsInfo}) {
         {mode==="study"&&word.arabic&&(
           <div style={{marginTop:4,padding:"10px 20px",background:"rgba(255,255,255,.08)",
             borderRadius:16,border:"1px solid rgba(255,255,255,.12)",textAlign:"center"}}>
-            <div style={{fontSize:20,fontWeight:900,color:"white"}}>{word.arabic}</div>
+            <div style={{fontSize:17,fontWeight:900,color:"white"}}>{word.arabic}</div>
           </div>
         )}
         <div style={{position:"absolute",bottom:14,fontSize:10,color:"rgba(255,255,255,.28)",textAlign:"center"}}>
@@ -785,7 +785,7 @@ export default function App() {
           </div>
 
           {/* Card */}
-          <div style={{flex:1,padding:"0 22px",position:"relative",display:"flex",
+          <div style={{flex:1,padding:"0 18px",position:"relative",display:"flex",
             alignItems:"center",justifyContent:"center",minHeight:0,overflow:"visible"}}>
             {next2&&<SwipeCard key={`bg2-${idx+2}`} word={next2} mode={mode} isTop={false} stackPos={2} onKnow={()=>{}} onDontKnow={()=>{}} srsInfo={null}/>}
             {next1&&<SwipeCard key={`bg1-${idx+1}`} word={next1} mode={mode} isTop={false} stackPos={1} onKnow={()=>{}} onDontKnow={()=>{}} srsInfo={null}/>}
