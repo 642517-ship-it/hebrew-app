@@ -36,7 +36,7 @@ async function deleteWordDB(id)      { return sbFetch(`/words?id=eq.${id}`, { me
 /* ── AI Enrich ──────────────────────────────── */
 async function aiEnrich(hebrewWord) {
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const res = await fetch("/api/enrich", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -53,10 +53,11 @@ Example: {"nikud":"שָׁלוֹם","arabic":"سلام / مرحباً","emoji":"�
         }]
       })
     });
+    if (!res.ok) throw new Error("API error");
     const data = await res.json();
     const text = data.content?.[0]?.text?.trim() || "{}";
     return JSON.parse(text.replace(/```json|```/g,"").trim());
-  } catch { return {}; }
+  } catch(e) { console.error(e); return {}; }
 }
 
 /* ── SRS ────────────────────────────────────── */
