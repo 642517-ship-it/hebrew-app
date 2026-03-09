@@ -183,11 +183,12 @@ function SwipeCard({word,mode,onKnow,onDontKnow,stackPos,isTop,srsInfo}) {
 }
 
 /* ── Add Word Sheet ─────────────────────────── */
-function AddWordSheet({deckColor,onSave,onClose}) {
+function AddWordSheet({deckColor,onSave,onClose,existingWords=[]}) {
   const [hebrew,setHebrew]=useState("");
   const [loading,setLoading]=useState(false);
   const [result,setResult]=useState(null);
   const [tr,setTr]=useState("");
+  const [dupWarning,setDupWarning]=useState(false);
   async function handleEnrich() {
     if(!hebrew.trim()) return;
     setLoading(true); setResult(null);
@@ -199,6 +200,15 @@ function AddWordSheet({deckColor,onSave,onClose}) {
   }
   function handleSave() {
     if(!hebrew.trim()) return;
+    const plain = hebrew.trim().replace(/[֑-ׇ]/g,"").trim().toLowerCase();
+    if(existingWords && existingWords.some(w=>{
+      const wp = (w.hebrew||"").replace(/[֑-ׇ]/g,"").trim().toLowerCase();
+      return wp === plain || (w.nikud||"").replace(/[֑-ׇ]/g,"").trim().toLowerCase() === plain;
+    })){
+      setDupWarning(true);
+      return;
+    }
+    setDupWarning(false);
     onSave({hebrew:hebrew.trim(),nikud:result?.nikud||hebrew.trim(),
       arabic:result?.arabic||"",emoji:result?.emoji||"📝",tr:tr.trim()});
     // Reset fields but keep modal open for next word
@@ -253,6 +263,13 @@ function AddWordSheet({deckColor,onSave,onClose}) {
             يُملأ تلقائياً عند الضغط على "تلقائي"
           </div>
         </div>
+        {dupWarning && (
+          <div style={{background:"rgba(255,107,107,.15)",border:"1px solid rgba(255,107,107,.4)",
+            borderRadius:12,padding:"10px 14px",marginBottom:10,textAlign:"center",
+            color:"#FF6B6B",fontSize:13,fontWeight:700}}>
+            ⚠️ هذه الكلمة موجودة بالفعل!
+          </div>
+        )}
         <div style={{display:"flex",gap:10}}>
           <button onClick={onClose} style={{flex:1,height:50,borderRadius:14,
             background:"rgba(255,255,255,.07)",border:"1px solid rgba(255,255,255,.12)",
@@ -513,7 +530,7 @@ export default function App() {
       <div style={{position:"relative",zIndex:1}}>
         <div style={{padding:"52px 22px 20px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div>
-            <div style={{fontSize:24,fontWeight:900,color:"white"}}>🇮🇱 عبري بسهولة</div>
+            <div style={{fontSize:24,fontWeight:900,color:"white"}}>📖✨ عبري بسهولة</div>
             <div style={{fontSize:13,color:"rgba(255,255,255,.45)",marginTop:2}}>تخصصاتي</div>
           </div>
           <div style={{display:"flex",gap:8,alignItems:"center"}}>
@@ -681,7 +698,7 @@ export default function App() {
         <div style={{height:32}}/>
       </div>
       {showAddWord&&isTeacher&&(
-        <AddWordSheet deckColor={deck.color} onSave={w=>addWord(deck.id,w)} onClose={()=>setShowAddWord(false)}/>
+        <AddWordSheet deckColor={deck.color} existingWords={deckWords} onSave={w=>addWord(deck.id,w)} onClose={()=>setShowAddWord(false)}/>
       )}
       {toast&&<Toast msg={toast}/>}
     </div>
@@ -761,7 +778,7 @@ export default function App() {
                 width:`${((idx+1)/queue.length)*100}%`,transition:"width .4s"}}/>
             </div>
           </div>
-          <div style={{padding:"0 22px",height:340,position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <div style={{padding:"0 22px",height:280,position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
             {next2&&<SwipeCard key={`bg2-${idx+2}`} word={next2} mode={mode} isTop={false} stackPos={2} onKnow={()=>{}} onDontKnow={()=>{}} srsInfo={null}/>}
             {next1&&<SwipeCard key={`bg1-${idx+1}`} word={next1} mode={mode} isTop={false} stackPos={1} onKnow={()=>{}} onDontKnow={()=>{}} srsInfo={null}/>}
             {cur&&<SwipeCard key={`top-${idx}`} word={cur} mode={mode} isTop={true} stackPos={0}
@@ -785,19 +802,31 @@ export default function App() {
                     opacity:idx>=queue.length-1?0.4:1}}>→</button>
               </>
             ):(
-              <>
-                <button onClick={()=>advance(false)}
-                  style={{flex:1,height:52,borderRadius:16,background:"rgba(255,107,107,.14)",
-                    border:"2px solid rgba(255,107,107,.35)",color:"#FF6B6B",
-                    fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>✗ لا أعرف</button>
+              <div style={{display:"flex",flexDirection:"column",gap:8,width:"100%"}}>
                 <button onClick={()=>speak(cur?.nikud||cur?.hebrew||"")}
-                  style={{width:52,height:52,borderRadius:16,background:"rgba(255,255,255,.07)",
-                    border:"1px solid rgba(255,255,255,.12)",color:"white",fontSize:18,cursor:"pointer"}}>🔊</button>
-                <button onClick={()=>advance(true)}
-                  style={{flex:1,height:52,borderRadius:16,background:"rgba(78,205,196,.14)",
-                    border:"2px solid rgba(78,205,196,.35)",color:"#4ECDC4",
-                    fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>✓ أعرفها</button>
-              </>
+                  style={{width:"100%",height:46,borderRadius:14,
+                    background:"rgba(255,255,255,.09)",
+                    border:"1px solid rgba(255,255,255,.2)",color:"white",
+                    fontSize:15,fontWeight:800,cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>
+                  🔊 استمع للنطق
+                </button>
+                <div style={{display:"flex",gap:8}}>
+                  <button onClick={()=>advance(false)}
+                    style={{flex:1,height:54,borderRadius:14,
+                      background:"rgba(255,107,107,.15)",
+                      border:"2px solid rgba(255,107,107,.5)",color:"#FF6B6B",
+                      fontSize:15,fontWeight:900,cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>
+                    ✗ لا أعرف
+                  </button>
+                  <button onClick={()=>advance(true)}
+                    style={{flex:1,height:54,borderRadius:14,
+                      background:"rgba(78,205,196,.15)",
+                      border:"2px solid rgba(78,205,196,.5)",color:"#4ECDC4",
+                      fontSize:15,fontWeight:900,cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>
+                    ✓ أعرفها
+                  </button>
+                </div>
+              </div>
             )}
           </div>
           {mode==="quiz"&&<div style={{textAlign:"center",fontSize:11,color:"rgba(255,255,255,.22)",padding:"0 0 8px"}}>أو اسحب البطاقة يميناً / يساراً</div>}
