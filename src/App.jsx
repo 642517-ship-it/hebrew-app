@@ -243,8 +243,15 @@ function AddWordSheet({deckColor,onSave,onClose}) {
           </div>
         )}
         <div style={{marginBottom:16}}>
-          <label style={{fontSize:12,color:"rgba(255,255,255,.45)",fontWeight:700,display:"block",marginBottom:5}}>النطق (اختياري)</label>
-          <input style={{...inp,direction:"ltr",textAlign:"left"}} placeholder="Shalom" value={tr} onChange={e=>setTr(e.target.value)}/>
+          <label style={{fontSize:12,color:"rgba(255,255,255,.45)",fontWeight:700,display:"block",marginBottom:5}}>
+            الكتابة بالحروف اللاتينية (اختياري)
+          </label>
+          <input style={{...inp,direction:"ltr",textAlign:"left"}} 
+            placeholder="مثال: Shalom, Kelev, Toda" 
+            value={tr} onChange={e=>setTr(e.target.value)}/>
+          <div style={{fontSize:11,color:"rgba(255,255,255,.25)",marginTop:4}}>
+            يُملأ تلقائياً عند الضغط على "تلقائي"
+          </div>
         </div>
         <div style={{display:"flex",gap:10}}>
           <button onClick={onClose} style={{flex:1,height:50,borderRadius:14,
@@ -433,8 +440,8 @@ export default function App() {
       const res = await insertWord({...word,deck_id:deckId});
       const newWord = Array.isArray(res)?res[0]:res;
       setWords(w=>({...w,[deckId]:[...(w[deckId]||[]),newWord]}));
-      setShowAddWord(false);
-      showToast("✅ تمت إضافة الكلمة!");
+      // Keep modal open for adding more words
+      showToast("✅ تمت إضافة الكلمة! أضف كلمة أخرى أو اضغط إلغاء");
     } catch { showToast("خطأ في إضافة الكلمة"); }
   }
 
