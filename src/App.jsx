@@ -152,7 +152,7 @@ function SwipeCard({word,mode,onKnow,onDontKnow,stackPos,isTop,srsInfo}) {
           color:"white",padding:"6px 16px",borderRadius:100,fontWeight:900,fontSize:14,
           fontFamily:"Tajawal,sans-serif",transform:"rotate(10deg)"}}>✗ لا أعرف</div>
       </>}
-      <div style={{width:"100%",minHeight:320,borderRadius:28,overflow:"hidden",
+      <div style={{width:"100%",minHeight:240,borderRadius:28,overflow:"hidden",
         background:"linear-gradient(145deg,rgba(108,99,255,.28),rgba(255,107,157,.16))",
         border:"1px solid rgba(255,255,255,.13)",backdropFilter:"blur(20px)",
         display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
@@ -530,7 +530,7 @@ export default function App() {
       <div style={{position:"relative",zIndex:1}}>
         <div style={{padding:"52px 22px 20px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div>
-            <div style={{fontSize:24,fontWeight:900,color:"white"}}>📖✨ عبري بسهولة</div>
+            <div style={{fontSize:24,fontWeight:900,color:"white"}}>🗂️ عبري بسهولة</div>
             <div style={{fontSize:13,color:"rgba(255,255,255,.45)",marginTop:2}}>تخصصاتي</div>
           </div>
           <div style={{display:"flex",gap:8,alignItems:"center"}}>
@@ -746,17 +746,19 @@ export default function App() {
     );
 
     return (
-      <div style={S.page}>
+      <div style={{...S.page,display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}}>
         <div style={S.blob(deck?.color||"#6C63FF","280px","-60px","-60px")}/>
-        <div style={{position:"relative",zIndex:1}}>
-          <div style={{padding:"50px 22px 12px",display:"flex",alignItems:"center",gap:12}}>
+        <div style={{position:"relative",zIndex:1,display:"flex",flexDirection:"column",height:"100%"}}>
+
+          {/* Header */}
+          <div style={{padding:"48px 22px 10px",display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
             <button onClick={()=>setView("deck")}
               style={{width:38,height:38,borderRadius:11,background:"rgba(255,255,255,.08)",
                 border:"1px solid rgba(255,255,255,.12)",color:"white",fontSize:16,
                 cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
             <div style={{flex:1}}>
-              <div style={{fontSize:14,fontWeight:800,color:"rgba(255,255,255,.7)"}}>
-                {mode==="study"?"📖 وضع الدراسة":"🎯 وضع الاختبار"} · {deck?.name}
+              <div style={{fontSize:13,fontWeight:800,color:"rgba(255,255,255,.7)"}}>
+                {mode==="study"?"📖 دراسة":"🎯 اختبار"} · {deck?.name}
               </div>
             </div>
             {mode==="quiz"&&(
@@ -767,70 +769,71 @@ export default function App() {
               </div>
             )}
           </div>
-          <div style={{padding:"0 22px 14px"}}>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
-              <span style={{fontSize:12,color:"rgba(255,255,255,.45)"}}>{idx+1} / {queue.length}</span>
-              {mode==="quiz"&&<span style={{fontSize:12,color:"rgba(255,255,255,.45)"}}>✓{correct} · ✗{wrong}</span>}
+
+          {/* Progress */}
+          <div style={{padding:"0 22px 10px",flexShrink:0}}>
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}>
+              <span style={{fontSize:11,color:"rgba(255,255,255,.45)"}}>{idx+1} / {queue.length}</span>
+              {mode==="quiz"&&<span style={{fontSize:11,color:"rgba(255,255,255,.45)"}}>✓{correct} · ✗{wrong}</span>}
             </div>
-            <div style={{height:5,background:"rgba(255,255,255,.1)",borderRadius:100,overflow:"hidden"}}>
+            <div style={{height:4,background:"rgba(255,255,255,.1)",borderRadius:100,overflow:"hidden"}}>
               <div style={{height:"100%",borderRadius:100,
                 background:`linear-gradient(90deg,${deck?.color||"#6C63FF"},${deck?.color||"#6C63FF"}88)`,
                 width:`${((idx+1)/queue.length)*100}%`,transition:"width .4s"}}/>
             </div>
           </div>
-          <div style={{padding:"0 22px",height:280,position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+
+          {/* Card */}
+          <div style={{flex:1,padding:"0 22px",position:"relative",display:"flex",
+            alignItems:"center",justifyContent:"center",minHeight:0}}>
             {next2&&<SwipeCard key={`bg2-${idx+2}`} word={next2} mode={mode} isTop={false} stackPos={2} onKnow={()=>{}} onDontKnow={()=>{}} srsInfo={null}/>}
             {next1&&<SwipeCard key={`bg1-${idx+1}`} word={next1} mode={mode} isTop={false} stackPos={1} onKnow={()=>{}} onDontKnow={()=>{}} srsInfo={null}/>}
             {cur&&<SwipeCard key={`top-${idx}`} word={cur} mode={mode} isTop={true} stackPos={0}
               onKnow={()=>advance(true)} onDontKnow={()=>advance(false)}
               srsInfo={mode==="quiz"&&getCard(srs,cur.id).streak>0?`🔁 بعد ${daysLeft(srs,cur.id)||"<1"} يوم`:null}/>}
           </div>
-          <div style={{padding:"10px 22px 8px",display:"flex",gap:10}}>
+
+          {/* Buttons */}
+          <div style={{padding:"10px 22px 6px",flexShrink:0}}>
             {mode==="study"?(
-              <>
+              <div style={{display:"flex",gap:8}}>
                 <button onClick={()=>idx>0&&setIdx(i=>i-1)} disabled={idx===0}
-                  style={{flex:1,height:52,borderRadius:16,background:"rgba(255,255,255,.07)",
-                    border:"1px solid rgba(255,255,255,.12)",color:idx===0?"rgba(255,255,255,.25)":"white",
+                  style={{flex:1,height:52,borderRadius:14,background:"rgba(255,255,255,.07)",
+                    border:"1px solid rgba(255,255,255,.12)",
+                    color:idx===0?"rgba(255,255,255,.25)":"white",
                     fontSize:22,cursor:idx===0?"not-allowed":"pointer"}}>←</button>
                 <button onClick={()=>speak(cur?.nikud||cur?.hebrew||"")}
-                  style={{flex:2,height:52,borderRadius:16,background:"rgba(255,255,255,.08)",
+                  style={{flex:2,height:52,borderRadius:14,background:"rgba(255,255,255,.08)",
                     border:"1px solid rgba(255,255,255,.15)",color:"white",fontSize:14,fontWeight:800,
                     cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>🔊 استمع</button>
                 <button onClick={()=>advance(true)} disabled={idx>=queue.length-1}
-                  style={{flex:1,height:52,borderRadius:16,background:deck?.color||"#6C63FF",
+                  style={{flex:1,height:52,borderRadius:14,background:deck?.color||"#6C63FF",
                     border:"none",color:"white",fontSize:22,cursor:"pointer",
                     opacity:idx>=queue.length-1?0.4:1}}>→</button>
-              </>
+              </div>
             ):(
-              <div style={{display:"flex",flexDirection:"column",gap:8,width:"100%"}}>
+              <div style={{display:"flex",flexDirection:"column",gap:8}}>
                 <button onClick={()=>speak(cur?.nikud||cur?.hebrew||"")}
                   style={{width:"100%",height:46,borderRadius:14,
-                    background:"rgba(255,255,255,.09)",
-                    border:"1px solid rgba(255,255,255,.2)",color:"white",
-                    fontSize:15,fontWeight:800,cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>
-                  🔊 استمع للنطق
-                </button>
+                    background:"rgba(255,255,255,.09)",border:"1px solid rgba(255,255,255,.2)",
+                    color:"white",fontSize:15,fontWeight:800,cursor:"pointer",
+                    fontFamily:"Tajawal,sans-serif"}}>🔊 استمع للنطق</button>
                 <div style={{display:"flex",gap:8}}>
                   <button onClick={()=>advance(false)}
-                    style={{flex:1,height:54,borderRadius:14,
-                      background:"rgba(255,107,107,.15)",
+                    style={{flex:1,height:54,borderRadius:14,background:"rgba(255,107,107,.15)",
                       border:"2px solid rgba(255,107,107,.5)",color:"#FF6B6B",
-                      fontSize:15,fontWeight:900,cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>
-                    ✗ لا أعرف
-                  </button>
+                      fontSize:15,fontWeight:900,cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>✗ لا أعرف</button>
                   <button onClick={()=>advance(true)}
-                    style={{flex:1,height:54,borderRadius:14,
-                      background:"rgba(78,205,196,.15)",
+                    style={{flex:1,height:54,borderRadius:14,background:"rgba(78,205,196,.15)",
                       border:"2px solid rgba(78,205,196,.5)",color:"#4ECDC4",
-                      fontSize:15,fontWeight:900,cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>
-                    ✓ أعرفها
-                  </button>
+                      fontSize:15,fontWeight:900,cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>✓ أعرفها</button>
                 </div>
               </div>
             )}
           </div>
-          {mode==="quiz"&&<div style={{textAlign:"center",fontSize:11,color:"rgba(255,255,255,.22)",padding:"0 0 8px"}}>أو اسحب البطاقة يميناً / يساراً</div>}
-          <div style={{display:"flex",gap:6,justifyContent:"center",padding:"4px 0 16px"}}>
+
+          {/* Dots */}
+          <div style={{display:"flex",gap:6,justifyContent:"center",padding:"6px 0 16px",flexShrink:0}}>
             {queue.slice(Math.max(0,idx-3),idx+6).map((_,i)=>{
               const ri=Math.max(0,idx-3)+i;
               return <div key={ri} style={{height:7,borderRadius:4,transition:"all .25s",
@@ -838,6 +841,7 @@ export default function App() {
                 width:ri===idx?"20px":"7px"}}/>;
             })}
           </div>
+
         </div>
         {toast&&<Toast msg={toast}/>}
       </div>
