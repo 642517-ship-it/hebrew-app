@@ -152,16 +152,16 @@ function SwipeCard({word,mode,onKnow,onDontKnow,stackPos,isTop,srsInfo}) {
           color:"white",padding:"6px 16px",borderRadius:100,fontWeight:900,fontSize:14,
           fontFamily:"Tajawal,sans-serif",transform:"rotate(10deg)"}}>✗ لا أعرف</div>
       </>}
-      <div style={{width:"100%",minHeight:240,borderRadius:28,overflow:"hidden",
+      <div style={{width:"100%",height:220,borderRadius:28,overflow:"hidden",
         background:"linear-gradient(145deg,rgba(108,99,255,.28),rgba(255,107,157,.16))",
         border:"1px solid rgba(255,255,255,.13)",backdropFilter:"blur(20px)",
         display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
-        padding:"28px 24px 48px",position:"relative"}}>
+        padding:"16px 24px 36px",position:"relative"}}>
         {srsInfo&&isTop&&<div style={{position:"absolute",top:14,left:14,
           background:"rgba(108,99,255,.3)",color:"#C4BCFF",padding:"3px 10px",
           borderRadius:100,fontSize:10,fontWeight:700}}>{srsInfo}</div>}
-        <div style={{fontSize:64,marginBottom:12,lineHeight:1}}>{word.emoji||"📝"}</div>
-        <div style={{fontSize:word.nikud?.length>8?44:word.nikud?.length>5?52:60,
+        <div style={{fontSize:48,marginBottom:6,lineHeight:1}}>{word.emoji||"📝"}</div>
+        <div style={{fontSize:word.nikud?.length>8?36:word.nikud?.length>5?42:50,
           fontWeight:900,color:"white",textAlign:"center",lineHeight:1.1,
           textShadow:"0 4px 28px rgba(108,99,255,.6)",letterSpacing:2,direction:"ltr",marginBottom:8}}>
           {word.nikud||word.hebrew}
@@ -171,7 +171,7 @@ function SwipeCard({word,mode,onKnow,onDontKnow,stackPos,isTop,srsInfo}) {
         {mode==="study"&&word.arabic&&(
           <div style={{marginTop:4,padding:"10px 20px",background:"rgba(255,255,255,.08)",
             borderRadius:16,border:"1px solid rgba(255,255,255,.12)",textAlign:"center"}}>
-            <div style={{fontSize:26,fontWeight:900,color:"white"}}>{word.arabic}</div>
+            <div style={{fontSize:20,fontWeight:900,color:"white"}}>{word.arabic}</div>
           </div>
         )}
         <div style={{position:"absolute",bottom:14,fontSize:10,color:"rgba(255,255,255,.28)",textAlign:"center"}}>
@@ -530,7 +530,7 @@ export default function App() {
       <div style={{position:"relative",zIndex:1}}>
         <div style={{padding:"52px 22px 20px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div>
-            <div style={{fontSize:24,fontWeight:900,color:"white"}}>🗂️ عبري بسهولة</div>
+            <div style={{fontSize:24,fontWeight:900,color:"white"}}>🎓 عبري بسهولة</div>
             <div style={{fontSize:13,color:"rgba(255,255,255,.45)",marginTop:2}}>تخصصاتي</div>
           </div>
           <div style={{display:"flex",gap:8,alignItems:"center"}}>
@@ -752,10 +752,10 @@ export default function App() {
 
           {/* Header */}
           <div style={{padding:"48px 22px 10px",display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
-            <button onClick={()=>setView("deck")}
-              style={{width:38,height:38,borderRadius:11,background:"rgba(255,255,255,.08)",
-                border:"1px solid rgba(255,255,255,.12)",color:"white",fontSize:16,
-                cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
+            <button onClick={()=>{ if(window.confirm("خروج من الجلسة؟")) setView("deck"); }}
+              style={{width:38,height:38,borderRadius:11,background:"rgba(255,107,107,.15)",
+                border:"1px solid rgba(255,107,107,.3)",color:"#FF6B6B",fontSize:16,
+                cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
             <div style={{flex:1}}>
               <div style={{fontSize:13,fontWeight:800,color:"rgba(255,255,255,.7)"}}>
                 {mode==="study"?"📖 دراسة":"🎯 اختبار"} · {deck?.name}
