@@ -48,8 +48,9 @@ Return a JSON object with exactly these fields:
 - "nikud": the word with full Hebrew vowel marks (niqqud)
 - "arabic": Arabic translation (short, 1-4 words)
 - "emoji": one relevant emoji that visually represents this word
+- "tr": the transliteration in Latin letters (e.g. "Shalom", "Toda", "Kelev")
 Return ONLY the JSON object, no explanation, no markdown.
-Example: {"nikud":"שָׁלוֹם","arabic":"سلام / مرحباً","emoji":"👋"}`
+Example: {"nikud":"שָׁלוֹם","arabic":"سلام / مرحباً","emoji":"👋","tr":"Shalom"}`
         }]
       })
     });
@@ -191,12 +192,16 @@ function AddWordSheet({deckColor,onSave,onClose}) {
     if(!hebrew.trim()) return;
     setLoading(true); setResult(null);
     const data=await aiEnrich(hebrew.trim());
-    setResult(data); setLoading(false);
+    setResult(data);
+    // Auto-fill transliteration if empty
+    if(data.tr) setTr(data.tr);
+    setLoading(false);
   }
   function handleSave() {
     if(!hebrew.trim()) return;
     onSave({hebrew:hebrew.trim(),nikud:result?.nikud||hebrew.trim(),
       arabic:result?.arabic||"",emoji:result?.emoji||"📝",tr:tr.trim()});
+    // Reset fields but keep modal open for next word
     setHebrew(""); setTr(""); setResult(null);
   }
   const inp={width:"100%",height:48,background:"rgba(255,255,255,.07)",
@@ -217,7 +222,7 @@ function AddWordSheet({deckColor,onSave,onClose}) {
           <div style={{display:"flex",gap:8}}>
             <input style={{...inp,flex:1,direction:"ltr",textAlign:"left",fontSize:result?.nikud?20:15}}
               placeholder="כתוב כאן..." value={result?.nikud||hebrew}
-              onChange={e=>{setHebrew(e.target.value);setResult(null);}}/>
+              onChange={e=>{setHebrew(e.target.value);setResult(null);setTr("");}}/>
             <button onClick={handleEnrich} disabled={!hebrew.trim()||loading}
               style={{height:48,padding:"0 14px",borderRadius:14,background:`${deckColor}33`,
                 border:`1px solid ${deckColor}66`,color:deckColor,fontSize:13,fontWeight:800,
