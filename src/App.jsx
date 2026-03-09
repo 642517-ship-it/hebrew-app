@@ -139,7 +139,8 @@ function SwipeCard({word,mode,onKnow,onDontKnow,stackPos,isTop,srsInfo}) {
   return (
     <div style={{position:"absolute",width:"100%",transform:tf,transition:tr,
       zIndex:isTop?10:8-stackPos,userSelect:"none",touchAction:"none",
-      cursor:isTop?(dragging.current?"grabbing":"grab"):"default"}}
+      cursor:isTop?(dragging.current?"grabbing":"grab"):"default",
+      left:0,right:0}}
       onMouseDown={onStart} onTouchStart={onStart} onTouchMove={onMove} onTouchEnd={onEnd}
       onClick={()=>{if(!didMove.current) speak(word.nikud||word.hebrew);}}>
       {isTop&&<>
@@ -389,7 +390,7 @@ export default function App() {
   const [decks,      setDecks]      = useState([]);
   const [words,      setWords]      = useState({}); // {deckId:[...]}
   const [srs,        setSRS]        = useState(()=>loadSRS());
-  const [isTeacher,  setIsTeacher]  = useState(false);
+  const [isTeacher,  setIsTeacher]  = useState(()=>localStorage.getItem('isTeacher')==='1');
   const [showLogin,  setShowLogin]  = useState(false);
   const [view,       setView]       = useState("home");
   const [activeDeck, setActiveDeck] = useState(null);
@@ -542,7 +543,7 @@ export default function App() {
                     color:"white",fontSize:13,fontWeight:800,cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>
                   + تخصص
                 </button>
-                <button onClick={()=>setIsTeacher(false)}
+                <button onClick={()=>{setIsTeacher(false);localStorage.removeItem('isTeacher');}}
                   style={{height:44,padding:"0 12px",borderRadius:14,background:"rgba(255,255,255,.08)",
                     border:"1px solid rgba(255,255,255,.15)",color:"rgba(255,255,255,.6)",
                     fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"Tajawal,sans-serif"}}>
@@ -606,7 +607,7 @@ export default function App() {
         <div style={{height:32}}/>
       </div>
       {showAddDeck&&<AddDeckSheet onSave={createDeck} onClose={()=>setShowAddDeck(false)}/>}
-      {showLogin&&<TeacherLogin onLogin={()=>{setIsTeacher(true);setShowLogin(false);showToast("مرحباً أستاذ! 👋");}} onClose={()=>setShowLogin(false)}/>}
+      {showLogin&&<TeacherLogin onLogin={()=>{setIsTeacher(true);localStorage.setItem('isTeacher','1');setShowLogin(false);showToast("مرحباً أستاذ! 👋");}} onClose={()=>setShowLogin(false)}/>}
       {toast&&<Toast msg={toast}/>}
     </div>
   );
@@ -785,7 +786,7 @@ export default function App() {
 
           {/* Card */}
           <div style={{flex:1,padding:"0 22px",position:"relative",display:"flex",
-            alignItems:"center",justifyContent:"center",minHeight:0}}>
+            alignItems:"center",justifyContent:"center",minHeight:0,overflow:"visible"}}>
             {next2&&<SwipeCard key={`bg2-${idx+2}`} word={next2} mode={mode} isTop={false} stackPos={2} onKnow={()=>{}} onDontKnow={()=>{}} srsInfo={null}/>}
             {next1&&<SwipeCard key={`bg1-${idx+1}`} word={next1} mode={mode} isTop={false} stackPos={1} onKnow={()=>{}} onDontKnow={()=>{}} srsInfo={null}/>}
             {cur&&<SwipeCard key={`top-${idx}`} word={cur} mode={mode} isTop={true} stackPos={0}
